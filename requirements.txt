@@ -9,6 +9,7 @@ requests
 evaluate
 langchain
 bs4
+selenium
 pdf2image
 pytesseract
 openpyxl
