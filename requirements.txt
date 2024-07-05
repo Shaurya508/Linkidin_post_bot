@@ -13,3 +13,4 @@ selenium
 pdf2image
 pytesseract
 openpyxl
+PyMuPDF
