@@ -29,7 +29,11 @@ from PIL import Image
 import io
 # Load the Google API key from the .env file
 # load_dotenv()
-genai.configure(api_key="AIzaSyCvw_aGHyJtLxpZ4Ojy8EyaEDtPOzZM29")
+API_KEY = "AIzaSyCvw_aGHyJtLxpZ4Ojy8EyaEDtPOzZM29"
+
+# Configure Google Generative AI API key
+genai.configure(api_key=API_KEY)
+
 # genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
 # Load the Google API key from the .env file
 # load_dotenv()
