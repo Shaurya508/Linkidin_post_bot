@@ -1,7 +1,6 @@
 import streamlit as st
 from new import user_input
-from evaluate import load
-# Load the ROUGE metric
+# from evaluate import load  # Uncomment if needed
 import time
 
 def create_ui():
@@ -20,24 +19,16 @@ def create_ui():
     #     """
     # )
 
-    # Get user input
-    question = st.text_input("Ask a question:")
+    # Create a form for input and submission
+    with st.form(key='question_form'):
+        question = st.text_input("Ask a question:")
+        submit_button = st.form_submit_button(label='Submit')
 
-    # Call user_input function when user clicks submit
-    if st.button("Submit"):
+    if submit_button:
         with st.spinner("Generating response..."):
-            # start_time = time.time()
-            response , context_docs = user_input(question)
-            # end_time = time.time()
-            # rouge = evaluate.load('rouge')
+            response, context_docs = user_input(question)
             output_text = response.get('output_text', 'No response')  # Extract the 'output_text' from the response
-            # context = ' '.join([doc.page_content for doc in context_docs])
-            # Ensure predictions and references are lists of strings
-            # results = rouge.compute(predictions=[output_text], references=[context])
-            # st.success("Response:")
             st.write(output_text)
-            # st.success("docs:")
-            # st.write(context_docs)
 
     # Add some footer
     st.markdown("---")
