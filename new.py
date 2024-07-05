@@ -132,7 +132,7 @@ def get_text_chunks(text):
     return text_splitter.split_text(text)
 
 def get_vector_store(text_chunks, batch_size=100):
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+    embeddings = GoogleGenerativeAIEmbeddings(apiKey = "AIzaSyCvw_aGHyJtLxpZ4Ojy8EyaEDtPOzZM29" , model="models/embedding-001")
     text_embeddings = []
     
     for i in range(0, len(text_chunks), batch_size):
@@ -204,12 +204,12 @@ def user_input(user_question):
 #     model, chain_type="stuff", memory=memory, prompt=PROMPT
 # )
 #     return chain({"input_documents": docs, "human_input": user_question}, return_only_outputs=True) , docs
-    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.5)
+    model = ChatGoogleGenerativeAI(apiKey = "AIzaSyCvw_aGHyJtLxpZ4Ojy8EyaEDtPOzZM29" , model="gemini-pro", temperature=0.5)
     # repo_id="mistralai/Mistral-7B-Instruct-v0.2"
     # model=HuggingFaceEndpoint(repo_id=repo_id,max_length=128,temperature=0.7,token=sec_key)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")  # Model for creating vector embeddings
+    embeddings = GoogleGenerativeAIEmbeddings(apiKey = "AIzaSyCvw_aGHyJtLxpZ4Ojy8EyaEDtPOzZM29" , model="models/embedding-001")  # Model for creating vector embeddings
     new_db = FAISS.load_local("faiss_index1", embeddings, allow_dangerous_deserialization=True)  # Load the previously saved vector db
     
 
