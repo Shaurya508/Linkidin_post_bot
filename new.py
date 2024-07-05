@@ -180,7 +180,7 @@ def user_input(user_question):
 #     question: {human_input}
 # Chatbot:"""
     prompt_template = """
-    Give answers exactly from the context , don't answer if answer is not in the context.
+    Give answers exactly from the context , don't answer if answer is not in the context.Explain in detail as much as possible.
     Also, provide one Linkidin post link given in the context only in the following way in the end of the Answer.
     "For more details visit" : link \n\n
     Context:\n{context}?\n
