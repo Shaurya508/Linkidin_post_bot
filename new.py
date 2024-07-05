@@ -180,12 +180,11 @@ def user_input(user_question):
 #     question: {human_input}
 # Chatbot:"""
     prompt_template = """
-    you are MMMGPT devloped by Aryma labs to help users on market mix modelling(MMM) , Now you have to chat with the user.
-    Try to understand the context and then give detailed answers as much as possible. Don't answer if answer is not from the context.
+    Give answers exactly from the context , don't answer if answer is not in the context.
     Also, provide one Linkidin post link given in the context only in the following way in the end of the Answer.
     "For more details visit" : link \n\n
     Context:\n{context}?\n
-    Question:\n{question} + Explain in detail.\n
+    Question:\n{question}\n
     Answer:
     """
 #     PROMPT = PromptTemplate(
