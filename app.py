@@ -20,7 +20,7 @@ def create_ui():
     # )
 
     # Create a form for input and submission
-    with st.form(key='question_form'):
+    with st.form(key='question_form', clear_on_submit=True):
         question = st.text_input("Ask a question:")
         submit_button = st.form_submit_button(label='Submit')
 
