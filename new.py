@@ -184,7 +184,7 @@ def user_input(user_question):
     Also, provide one Linkidin post link given in the context only in the following way in the end of the Answer.
     "For more details visit" : link \n\n
     Context:\n{context}?\n
-    Question:\n{question}\n
+    Question:\n{question} + Explain in detail .\n
     Answer:
     """
 #     PROMPT = PromptTemplate(
