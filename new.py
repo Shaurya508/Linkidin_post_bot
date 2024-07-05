@@ -4,7 +4,7 @@ import os
 # from PyPDF2 import PdfReader #used it before now using tesseract
 import requests
 from bs4 import BeautifulSoup
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 import google.generativeai as genai
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
@@ -29,16 +29,16 @@ from PIL import Image
 import io
 # Load the Google API key from the .env file
 # load_dotenv()
-API_KEY = "AIzaSyCvw_aGHyJtLxpZ4Ojy8EyaEDtPOzZM29"
+# API_KEY = "AIzaSyCvw_aGHyJtLxpZ4Ojy8EyaEDtPOzZM29"
 
 # Configure Google Generative AI API key
-genai.configure(api_key=API_KEY)
+# genai.configure(api_key=API_KEY)
 
 # genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
 # Load the Google API key from the .env file
-# load_dotenv()
+load_dotenv()
 # genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-# genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
+genai.configure(api_key=os.getenv('GOOGLE_API_KEY'))
 
 # sec_key=os.getenv("HUGGINGFACEHUB_API_TOKEN")
 # os.environ["HUGGINGFACEHUB_API_TOKEN"]=sec_key
@@ -132,7 +132,7 @@ def get_text_chunks(text):
     return text_splitter.split_text(text)
 
 def get_vector_store(text_chunks, batch_size=100):
-    embeddings = GoogleGenerativeAIEmbeddings(apiKey = "AIzaSyCvw_aGHyJtLxpZ4Ojy8EyaEDtPOzZM29" , model="models/embedding-001")
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
     text_embeddings = []
     
     for i in range(0, len(text_chunks), batch_size):
@@ -204,13 +204,13 @@ def user_input(user_question):
 #     model, chain_type="stuff", memory=memory, prompt=PROMPT
 # )
 #     return chain({"input_documents": docs, "human_input": user_question}, return_only_outputs=True) , docs
-    model = ChatGoogleGenerativeAI(apiKey = "AIzaSyCvw_aGHyJtLxpZ4Ojy8EyaEDtPOzZM29" , model="gemini-pro", temperature=0.5)
+    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.5)
     # repo_id="mistralai/Mistral-7B-Instruct-v0.2"
     # model=HuggingFaceEndpoint(repo_id=repo_id,max_length=128,temperature=0.7,token=sec_key)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
-    embeddings = GoogleGenerativeAIEmbeddings(apiKey = "AIzaSyCvw_aGHyJtLxpZ4Ojy8EyaEDtPOzZM29" , model="models/embedding-001")  # Model for creating vector embeddings
-    new_db = FAISS.load_local("faiss_index1", embeddings, allow_dangerous_deserialization=True)  # Load the previously saved vector db
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")  # Model for creating vector embeddings
+    new_db = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)  # Load the previously saved vector db
     
 
     # chain , model = get_conversational_chain()
