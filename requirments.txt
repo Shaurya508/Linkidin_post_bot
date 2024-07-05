@@ -5,3 +5,10 @@ langchain
 PyPDF2
 faiss-cpu
 langchain_google_genai
+requests
+evaluate
+langchain
+bs4
+pdf2image
+pytesseract
+openpyxl
