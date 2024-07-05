@@ -5,7 +5,7 @@ from evaluate import load
 import time
 
 def create_ui():
-    st.title("Linkidin Post Bot!")
+    st.title("Linkidin GPT!")
     st.sidebar.image("Aryma Labs Logo.jpeg", use_column_width=True)
     st.sidebar.write("### Welcome to Aryma Labs")
     st.sidebar.write("Ask a question below and get instant insights.")
