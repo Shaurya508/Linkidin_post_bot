@@ -218,7 +218,7 @@ def user_input(user_question):
 
 
 
-    docs = new_db.similarity_search(query=user_question, k = 3)
+    docs = new_db.similarity_search(query=user_question, k = 4)
  
 
 
