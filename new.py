@@ -203,7 +203,7 @@ def user_input(user_question):
 #     model, chain_type="stuff", memory=memory, prompt=PROMPT
 # )
 #     return chain({"input_documents": docs, "human_input": user_question}, return_only_outputs=True) , docs
-    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3)
+    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0)
     # repo_id="mistralai/Mistral-7B-Instruct-v0.2"
     # model=HuggingFaceEndpoint(repo_id=repo_id,max_length=128,temperature=0.7,token=sec_key)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
