@@ -180,8 +180,8 @@ def user_input(user_question):
 #     question: {human_input}
 # Chatbot:"""
     prompt_template = """
-    Give answers exactly from the context , don't answer if answer is not in the context.Explain in detail as much as possible.
-    Also, provide one Linkidin post link given in the context only in the following way in the end of the Answer.
+    Try to understand the context and then give detailed answers. Don't answer if answer is not from the context.\n
+    Also provide link from the context.
     "For more details visit" : link \n\n
     Context:\n{context}?\n
     Question:\n{question} + Explain in detail .\n
@@ -209,7 +209,7 @@ def user_input(user_question):
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")  # Model for creating vector embeddings
-    new_db = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)  # Load the previously saved vector db
+    new_db = FAISS.load_local("faiss_index1", embeddings, allow_dangerous_deserialization=True)  # Load the previously saved vector db
     
 
     # chain , model = get_conversational_chain()
