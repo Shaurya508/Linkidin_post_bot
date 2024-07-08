@@ -181,7 +181,6 @@ def user_input(user_question):
 # Chatbot:"""
     prompt_template = """
     Try to understand the context and then give detailed answers. Don't answer if answer is not from the context.\n
-    Consider only the top context that is the first paragraph.
     Also provide link from the context.
     "For more details visit" : link \n\n
     Context:\n{context}?\n
