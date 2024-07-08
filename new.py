@@ -181,8 +181,8 @@ def user_input(user_question):
 # Chatbot:"""
     prompt_template = """
     Try to understand the context and then give detailed answers. Don't answer if answer is not from the context.\n
-    Also provide link from the context.
-    "For more details visit" : link \n\n
+    Also provide Linkedin Link from the context.
+    "For more details visit" : Linkedin Link \n\n
     Context:\n{context}?\n
     Question:\n{question} + Explain in detail .\n
     Answer:
