@@ -209,7 +209,7 @@ def user_input(user_question):
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")  # Model for creating vector embeddings
-    new_db = FAISS.load_local("faiss_index1", embeddings, allow_dangerous_deserialization=True)  # Load the previously saved vector db
+    new_db = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)  # Load the previously saved vector db
     
 
     # chain , model = get_conversational_chain()
