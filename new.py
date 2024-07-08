@@ -128,7 +128,7 @@ def extract_code_from_github(raw_url):
     #     print(f"Failed to retrieve the URL. Status code: {response.status_code}")
 
 def get_text_chunks(text):
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=20)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=2500, chunk_overlap=500)
     return text_splitter.split_text(text)
 
 def get_vector_store(text_chunks, batch_size=100):
@@ -141,7 +141,7 @@ def get_vector_store(text_chunks, batch_size=100):
         text_embeddings.extend(zip(batch, batch_embeddings))
     
     vector_store = FAISS.from_embeddings(text_embeddings, embedding=embeddings)
-    vector_store.save_local("faiss_index1")
+    vector_store.save_local("faiss_index3")
     return vector_store
 
 
@@ -181,6 +181,7 @@ def user_input(user_question):
 # Chatbot:"""
     prompt_template = """
     Try to understand the context and then give detailed answers. Don't answer if answer is not from the context.\n
+    Consider only the top context that is the first paragraph.
     Also provide link from the context.
     "For more details visit" : link \n\n
     Context:\n{context}?\n
@@ -203,7 +204,7 @@ def user_input(user_question):
 #     model, chain_type="stuff", memory=memory, prompt=PROMPT
 # )
 #     return chain({"input_documents": docs, "human_input": user_question}, return_only_outputs=True) , docs
-    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0)
+    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0.3)
     # repo_id="mistralai/Mistral-7B-Instruct-v0.2"
     # model=HuggingFaceEndpoint(repo_id=repo_id,max_length=128,temperature=0.7,token=sec_key)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
@@ -214,11 +215,11 @@ def user_input(user_question):
 
     # chain , model = get_conversational_chain()
 
-    # mq_retriever = MultiQueryRetriever.from_llm(retriever = new_db.as_retriever(k = 3), llm = model)
+    mq_retriever = MultiQueryRetriever.from_llm(retriever = new_db.as_retriever(search_kwargs={'k': 1}) , llm =  model)
 
 
-
-    docs = new_db.similarity_search(query=user_question, k = 5)
+    docs = mq_retriever.get_relevant_documents(query=user_question)
+    # docs = new_db.similarity_search(query=user_question, k = 2)
  
 
 
