@@ -11,7 +11,7 @@ from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGener
 from langchain.chains.question_answering import load_qa_chain
 import pandas as pd
 from langchain.retrievers.multi_query import MultiQueryRetriever
-from langchain.memory import ConversationBufferMemory
+# from langchain.memory import ConversationBufferMemory
 # from langchain.chains import ConversationalRetrievalChain
 # from langchain.chains import ConversationChain
 from pdf2image import convert_from_path
@@ -22,11 +22,13 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
-
 import fitz  # PyMuPDF
 import pytesseract
 from PIL import Image
 import io
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 # Load the Google API key from the .env file
 # load_dotenv()
 # API_KEY = "AIzaSyCvw_aGHyJtLxpZ4Ojy8EyaEDtPOzZM29"
@@ -60,9 +62,7 @@ def linkedin_login(email, password , driver):
     # Wait for a bit to allow login to complete
     time.sleep(5)
 
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+
 
 def scrape_linkedin_post(url, driver):
     # Open the LinkedIn post URL
@@ -180,7 +180,8 @@ def user_input(user_question):
 #     question: {human_input}
 # Chatbot:"""
     prompt_template = """
-    Try to understand the context and then give detailed answers. Don't answer if answer is not from the context.\n
+    Answer the question as detailed as possible from the provided context, make sure to provide all the details.\n
+    Your answer should look like it is taken from the context only , don't tell things from outside the context.\n
     Also provide Linkedin Link from the context.
     "For more details visit" : Linkedin Link \n\n
     Context:\n{context}?\n
@@ -204,12 +205,30 @@ def user_input(user_question):
 # )
 #     return chain({"input_documents": docs, "human_input": user_question}, return_only_outputs=True) , docs
     model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0)
+    # model_name = "Intel/dynamic_tinybert"
+
+# Load the tokenizer associated with the specified model
+    # tokenizer = AutoTokenizer.from_pretrained(model_name, padding=True, truncation=True, max_length=512)
+    # Define a question-answering pipeline using the model and tokenizer
+    # question_answerer = pipeline(
+    # "question-answering", 
+    # model=model_name, 
+    # tokenizer=tokenizer,
+    # return_tensors='pt'
+# )
+
+# Create an instance of the HuggingFacePipeline, which wraps the question-answering pipeline
+# with additional model-specific arguments (temperature and max_length)
+    # model = HuggingFacePipeline(
+    # pipeline=question_answerer,
+    # model_kwargs={"temperature": 0.7, "max_length": 512},
+# )
     # repo_id="mistralai/Mistral-7B-Instruct-v0.2"
     # model=HuggingFaceEndpoint(repo_id=repo_id,max_length=128,temperature=0.7,token=sec_key)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")  # Model for creating vector embeddings
-    new_db = FAISS.load_local("faiss_index", embeddings, allow_dangerous_deserialization=True)  # Load the previously saved vector db
+    new_db = FAISS.load_local("faiss_index2", embeddings, allow_dangerous_deserialization=True)  # Load the previously saved vector db
     
 
     # chain , model = get_conversational_chain()
