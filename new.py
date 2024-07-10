@@ -181,7 +181,7 @@ def user_input(user_question):
 # Chatbot:"""
     prompt_template = """
     Answer the question as detailed as possible from the provided context, make sure to provide all the details.\n
-    Your answer should look like it is taken from the context only , don't tell things from outside the context.\n
+    Your answer should look like it is taken from the context only , don't tell any thing from outside the context.\n
     Also provide Linkedin Link from the context.
     "For more details visit" : Linkedin Link \n\n
     Context:\n{context}?\n
