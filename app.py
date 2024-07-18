@@ -77,8 +77,8 @@ def create_ui():
     st.markdown(hide_streamlit_style, unsafe_allow_html=True)
     st.markdown("<h2 style='text-align: center; color: #0adbfc;'><u> Venkat's LinkedIn GPT</u></h2>", unsafe_allow_html=True)
     st.sidebar.image("Aryma Labs Logo.jpeg")
-    st.sidebar.markdown("<h2 style='color: #08daff;'>Welcome to Aryma Labs</h2>", unsafe_allow_html=True)
-    st.sidebar.write("Ask anything about MMM and get accurate answers.")
+    st.sidebar.markdown("<h2 style='color: #08daff;'>Welcome to Venkat's LinkedIn GPT</h2>", unsafe_allow_html=True)
+    # st.sidebar.write("Ask anything about MMM and get accurate answers.")
     
 
     if not st.session_state.authenticated:
@@ -119,7 +119,7 @@ def create_ui():
             with col1:
                 st.image('download.png', width=30)
             with col2:
-                st.write("Hello, I am Venkat's LinkedIn GPT from Aryma Labs. How can I help you?")
+                st.write("Hello, I am Venkat's LinkedIn GPT . How can I help you?")
         for q, r in st.session_state.conversation_history:
             st.markdown(f"<p style='text-align: right; color: #484f4f;'><b>{q}</b></p>", unsafe_allow_html=True)
             col1, col2 = st.columns([1, 8])
