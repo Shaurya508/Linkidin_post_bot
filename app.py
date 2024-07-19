@@ -1,7 +1,9 @@
 import streamlit as st
 import pandas as pd
 from new import user_input
-
+from io import BytesIO
+from PIL import Image , UnidentifiedImageError
+import requests
 # Define the maximum number of free queries
 QUERY_LIMIT = 100
 
@@ -120,14 +122,21 @@ def create_ui():
                 st.image('download.png', width=30)
             with col2:
                 st.write("Hello, I am Venkat's LinkedIn GPT . How can I help you?")
-        for q, r in st.session_state.conversation_history:
+        for q, r , url , post_link in st.session_state.conversation_history:
             st.markdown(f"<p style='text-align: right; color: #484f4f;'><b>{q}</b></p>", unsafe_allow_html=True)
             col1, col2 = st.columns([1, 8])
             with col1:
                 st.image('download.png', width=30)
             with col2:
                 st.write(r)
-
+                st.write("for more details , Please visit : " +  post_link)
+                if url is not None:
+                    try:
+                        response = requests.get(url)
+                        img = Image.open(BytesIO(response.content))
+                        st.image(img, use_column_width=True)
+                    except UnidentifiedImageError:
+                        pass
     # Get user input at the bottom
     st.markdown("---")
     instr = "Ask a question:"
@@ -149,10 +158,10 @@ def create_ui():
             st.warning("You have reached the limit of free queries. Please consider our pricing options for further use.")
         else:
             with st.spinner("Generating response..."):
-                response, docs = user_input(question)
+                response, image_address , post_link= user_input(question)
                 output_text = response.get('output_text', 'No response')  # Extract the 'output_text' from the response
                 st.session_state.chat += str(output_text)
-                st.session_state.conversation_history.append((question, output_text))
+                st.session_state.conversation_history.append((question, output_text,image_address, post_link))
                 st.session_state.suggested_question = ""  # Reset the suggested question after submission
                 st.session_state.query_count += 1  # Increment the query count
                 st.session_state.generate_response = False
