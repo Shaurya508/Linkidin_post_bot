@@ -4,6 +4,8 @@ from new import user_input
 from io import BytesIO
 from PIL import Image , UnidentifiedImageError
 import requests
+from trial import translate
+import re
 # Define the maximum number of free queries
 QUERY_LIMIT = 100
 
@@ -25,6 +27,13 @@ if 'generate_response' not in st.session_state:
 
 if 'chat' not in st.session_state:
     st.session_state.chat = ""
+
+def clean_text(text):
+    # Remove asterisks used for bold formatting
+    text = re.sub(r'\*+', '', text)
+    # Remove text starting from "For more details"
+    text = re.sub(r'For more details.*$', '', text, flags=re.IGNORECASE)
+    return text
 
 def authenticate_user(email):
     # Load the Excel file
@@ -114,29 +123,73 @@ def create_ui():
 
     # Display the conversation history in reverse order to resemble a chat interface
     chat_container = st.container()
-
+    LANGUAGES = {
+    'Arabic': 'ar',
+    'Azerbaijani': 'az',
+    'Catalan': 'ca',
+    'Chinese': 'zh',
+    'Czech': 'cs',
+    'Danish': 'da',
+    'Dutch': 'nl',
+    'English': 'en',
+    'Esperanto': 'eo',
+    'Finnish': 'fi',
+    'French': 'fr',
+    'German': 'de',
+    'Greek': 'el',
+    'Hebrew': 'he',
+    'Hindi': 'hi',
+    'Hungarian': 'hu',
+    'Indonesian': 'id',
+    'Irish': 'ga',
+    'Italian': 'it',
+    'Japanese': 'ja',
+    'Korean': 'ko',
+    'Persian': 'fa',
+    'Polish': 'pl',
+    'Portuguese': 'pt',
+    'Russian': 'ru',
+    'Slovak': 'sk',
+    'Spanish': 'es',
+    'Swedish': 'sv',
+    'Turkish': 'tr',
+    'Ukrainian': 'uk',
+    'bengali' : 'bn'
+}
     with chat_container:
         if st.session_state.conversation_history == []:
             col1, col2 = st.columns([1, 8])
             with col1:
                 st.image('download.png', width=30)
             with col2:
+                
                 st.write("Hello, I am Venkat's LinkedIn GPT . How can I help you?")
-        for q, r , url , post_link in st.session_state.conversation_history:
-            st.markdown(f"<p style='text-align: right; color: #484f4f;'><b>{q}</b></p>", unsafe_allow_html=True)
-            col1, col2 = st.columns([1, 8])
-            with col1:
-                st.image('download.png', width=30)
-            with col2:
-                st.write(r)
-                st.write("for more details , Please visit : " +  post_link)
-                if url is not None:
-                    try:
-                        response = requests.get(url)
-                        img = Image.open(BytesIO(response.content))
-                        st.image(img, use_column_width=True)
-                    except UnidentifiedImageError:
-                        pass
+    for idx , (q, r , url , post_link) in enumerate(st.session_state.conversation_history):
+        st.markdown(f"<p style='text-align: right; color: #484f4f;'><b>{q}</b></p>", unsafe_allow_html=True)
+        col1, col2 = st.columns([1, 8])
+        with col1:
+            st.image('download.png', width=30)
+        with col2:
+            st.write(r + "\n")
+            st.write("for more details , please visit :" + post_link)
+            target_language = st.selectbox('Select target language', options=list(LANGUAGES.keys()), key=f'target_language_{idx}')
+        if st.button('Translate', key=f'translate_button_{idx}'):
+    
+            if target_language:
+                # Translation
+                translated_text = translate(clean_text(r), from_lang='en', to_lang=LANGUAGES[target_language])
+
+            # Display the translation
+            # st.subheader('Translated Text')
+            st.write( translated_text + "\n\n" + translate("For more details, please visit", from_lang='en', to_lang=LANGUAGES[target_language]) + ": " + post_link)
+        if url is not None:
+            try:
+                response = requests.get(url)
+                img = Image.open(BytesIO(response.content))
+                st.image(img, use_column_width=True)
+            except UnidentifiedImageError:
+                pass
+                    
     # Get user input at the bottom
     st.markdown("---")
     instr = "Ask a question:"
