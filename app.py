@@ -105,7 +105,20 @@ def create_ui():
                 else:
                     st.error("Invalid email or password. Please try again.")
         return
-
+        
+     with st.sidebar.expander("Popular Questions", expanded=False):
+        suggested_questions = [
+            "Why is logistic regression not a classification algorithm ?",
+            "What are the assumptions of Linear Regression ?",
+            "What is confidence interval ?",
+            "Why errors and residuals are not same ?",
+            "How MMMs can be calibrated and validated?",
+            "What is the German tank problem ?"
+        ]
+        for i, question in enumerate(suggested_questions):
+            if st.button(question, key=f"popular_question_{i}", use_container_width=True):
+                st.session_state.suggested_question = question
+                st.session_state.generate_response = True
     # st.sidebar.markdown("<h5 style='color: #08daff;'>Popular Questions</h3>", unsafe_allow_html=True)
 
     # suggested_questions = [
