@@ -108,13 +108,13 @@ def create_ui():
         
     with st.sidebar.expander("Popular Questions", expanded=False):
         suggested_questions = [
-            "Why is logistic regression not a classification algorithm ?",
-            "What are the assumptions of Linear Regression ?",
-            "What is confidence interval ?",
-            "Why errors and residuals are not same ?",
-            "How MMMs can be calibrated and validated?",
-            "What is the German tank problem ?"
-        ]
+    "What are Venkat's views on why logistic regression is not a classification algorithm?",
+    "What are Venkat's views on the assumptions of Linear Regression?",
+    "What are Venkat's views on confidence intervals?",
+    "What are Venkat's views on why errors and residuals are not the same?",
+    "What are Venkat's views on how MMMs can be calibrated and validated?",
+    "What are Venkat's views on the German tank problem?"
+]
         for i, question in enumerate(suggested_questions):
             if st.button(question, key=f"popular_question_{i}", use_container_width=True):
                 st.session_state.suggested_question = question
