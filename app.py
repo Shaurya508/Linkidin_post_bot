@@ -106,7 +106,7 @@ def create_ui():
                     st.error("Invalid email or password. Please try again.")
         return
         
-     with st.sidebar.expander("Popular Questions", expanded=False):
+    with st.sidebar.expander("Popular Questions", expanded=False):
         suggested_questions = [
             "Why is logistic regression not a classification algorithm ?",
             "What are the assumptions of Linear Regression ?",
