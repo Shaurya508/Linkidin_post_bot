@@ -144,7 +144,6 @@ def create_ui():
     'Czech': 'cs',
     'Danish': 'da',
     'Dutch': 'nl',
-    'English': 'en',
     'Esperanto': 'eo',
     'Finnish': 'fi',
     'French': 'fr',
