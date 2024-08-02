@@ -6,6 +6,8 @@ from PIL import Image , UnidentifiedImageError
 import requests
 from trial import translate
 import re
+from Levenshtein import distance as levenshtein_distance
+
 # Define the maximum number of free queries
 QUERY_LIMIT = 100
 
@@ -47,6 +49,24 @@ def authenticate_user(email):
     if not user.empty:
         return True
     return False
+
+def get_image_link(article_link, file_path='Article_Links.xlsx'):
+    # Load the Excel file
+    df = pd.read_excel(file_path)
+
+    # Ensure the columns are named correctly
+    df.columns = ['Article Link', 'Image link']
+
+    # Create a dictionary mapping article links to image links
+    link_mapping = dict(zip(df['Article Link'], df['Image link']))
+
+    # Find the most similar article link using Levenshtein distance
+    most_similar_link = min(df['Article Link'], key=lambda x: levenshtein_distance(x, article_link))
+    image_link = link_mapping.get(most_similar_link, "Image link not found")
+    
+    if image_link == "Image link not found" or image_link == 0:
+        return None
+    return image_link
 
 def create_ui():
     hide_streamlit_style = """
@@ -105,20 +125,7 @@ def create_ui():
                 else:
                     st.error("Invalid email or password. Please try again.")
         return
-        
-    with st.sidebar.expander("Popular Questions", expanded=False):
-        suggested_questions = [
-    "What are Venkat's views on why logistic regression is not a classification algorithm?",
-    "What are Venkat's views on the assumptions of Linear Regression?",
-    "What are Venkat's views on confidence intervals?",
-    "What are Venkat's views on why errors and residuals are not the same?",
-    "What are Venkat's views on how MMMs can be calibrated and validated?",
-    "What are Venkat's views on the German tank problem?"
-]
-        for i, question in enumerate(suggested_questions):
-            if st.button(question, key=f"popular_question_{i}", use_container_width=True):
-                st.session_state.suggested_question = question
-                st.session_state.generate_response = True
+
     # st.sidebar.markdown("<h5 style='color: #08daff;'>Popular Questions</h3>", unsafe_allow_html=True)
 
     # suggested_questions = [
@@ -144,6 +151,7 @@ def create_ui():
     'Czech': 'cs',
     'Danish': 'da',
     'Dutch': 'nl',
+    'English': 'en',
     'Esperanto': 'eo',
     'Finnish': 'fi',
     'French': 'fr',
@@ -194,9 +202,10 @@ def create_ui():
             # Display the translation
             # st.subheader('Translated Text')
             st.write( translated_text + "\n\n" + translate("For more details, please visit", from_lang='en', to_lang=LANGUAGES[target_language]) + ": " + post_link)
-        if url is not None:
+        image_link = get_image_link(post_link)
+        if image_link is not None:
             try:
-                response = requests.get(url)
+                response = requests.get(image_link)
                 img = Image.open(BytesIO(response.content))
                 st.image(img, use_column_width=True)
             except UnidentifiedImageError:
