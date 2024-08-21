@@ -121,7 +121,7 @@ def create_ui():
             if login_button:
                 if authenticate_user(email):
                     st.session_state.authenticated = True
-                    st.experimental_rerun()
+                    st.rerun()
                 else:
                     st.error("Invalid email or password. Please try again.")
         return
