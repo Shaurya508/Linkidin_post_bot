@@ -50,7 +50,7 @@ def authenticate_user(email):
         return True
     return False
 
-def get_image_link(article_link, file_path='Linkidin_blogs.xlsx'):
+def get_image_link(article_link, file_path='Article_Links.xlsx'):
     # Load the Excel file
     df = pd.read_excel(file_path)
 
