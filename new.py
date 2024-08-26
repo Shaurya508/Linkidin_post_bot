@@ -22,7 +22,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
-# import fitz  # PyMuPDF
+import fitz  # PyMuPDF
 import pytesseract
 from PIL import Image
 import io
@@ -66,25 +66,58 @@ def linkedin_login(email, password , driver):
 
 
 
+# def scrape_linkedin_post(url, driver):
+#     # Open the LinkedIn post URL
+#     driver.get(url)
+#     try:
+#         img_elements = driver.find_elements(By.TAG_NAME, 'img')
+
+#     # Extract and print image URLs
+#         image_url = [img.get_attribute('src') for img in img_elements]
+#         # image_url = image_element.get_attribute('src')
+#     except:
+#         image_url = None
+#     # Wait for the content to load
+#     try:
+#         post_content = WebDriverWait(driver, 10).until(
+#             EC.presence_of_element_located((By.CLASS_NAME, 'feed-shared-update-v2__description'))
+#         )
+#         return post_content.text.encode('ascii', 'ignore').decode('ascii') , image_url
+#     except:
+#         return "Could not find the main content of the post." , image_url
+
 def scrape_linkedin_post(url, driver):
     # Open the LinkedIn post URL
     driver.get(url)
+    
+    # Initialize image_url list
+    image_urls = []
+    
     try:
-        img_elements = driver.find_elements(By.TAG_NAME, 'img')
+        # Wait for all images to load
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_all_elements_located((By.TAG_NAME, 'img'))
+        )
 
-    # Extract and print image URLs
-        image_url = [img.get_attribute('src') for img in img_elements]
-        # image_url = image_element.get_attribute('src')
-    except:
-        image_url = None
+        # Get all image elements within the post container
+        img_elements = driver.find_elements(By.TAG_NAME, 'img')
+        
+        # Extract URLs from all images
+        image_urls = [img.get_attribute('src') for img in img_elements]
+        
+    except NoSuchElementException:
+        image_urls = None
+    
     # Wait for the content to load
     try:
         post_content = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, 'feed-shared-update-v2__description'))
         )
-        return post_content.text.encode('ascii', 'ignore').decode('ascii') , image_url
+        post_text = post_content.text.encode('ascii', 'ignore').decode('ascii')
     except:
-        return "Could not find the main content of the post." , image_url
+        post_text = "Could not find the main content of the post."
+
+    return post_text, image_urls
 
 
 def get_text_chunks(text):
@@ -101,7 +134,7 @@ def get_vector_store(text_chunks, batch_size=100):
         text_embeddings.extend(zip(batch, batch_embeddings))
     
     vector_store = FAISS.from_embeddings(text_embeddings, embedding=embeddings)
-    vector_store.save_local("faiss_index_added")
+    vector_store.save_local("faiss_index_DS")
     return vector_store
 
 class Document:
@@ -159,7 +192,7 @@ def user_input(user_question):
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")  # Model for creating vector embeddings
     # new_db = FAISS.load_local("faiss_index_images", embeddings, allow_dangerous_deserialization=True)  # Load the previously saved vector db
-    new_db1 = FAISS.load_local("faiss_index_added", embeddings, allow_dangerous_deserialization=True)
+    new_db1 = FAISS.load_local("faiss_index_DS", embeddings, allow_dangerous_deserialization=True)
     # new_db1.merge_from(new_db)
     mq_retriever = MultiQueryRetriever.from_llm(retriever = new_db1.as_retriever(search_kwargs={'k': 1}) , llm =  model)
     docs = mq_retriever.get_relevant_documents(query=user_question)
@@ -175,23 +208,23 @@ def user_input(user_question):
     response = chain({"input_documents": docs, "question": user_question}, return_only_outputs=True)
     return response, image_address , post_link
 
-# def extract_links(pdf_path):
-#     links = []
-#     doc = fitz.open(pdf_path)
+def extract_links(pdf_path):
+    links = []
+    doc = fitz.open(pdf_path)
 
-#     for page_num in range(len(doc)):
-#         page = doc.load_page(page_num)
+    for page_num in range(len(doc)):
+        page = doc.load_page(page_num)
         
-#         # Extract links using PyMuPDF
-#         for link in page.get_links():
-#             if 'uri' in link:
-#                 links.append(link['uri'])
+        # Extract links using PyMuPDF
+        for link in page.get_links():
+            if 'uri' in link:
+                links.append(link['uri'])
         
-#         # If OCR is needed
-#         pix = page.get_pixmap()
-#         img = Image.open(io.BytesIO(pix.tobytes()))
+        # If OCR is needed
+        pix = page.get_pixmap()
+        img = Image.open(io.BytesIO(pix.tobytes()))
 
-#     return links
+    return links
 
 
 
@@ -230,7 +263,7 @@ def extract_next_image_url(post_url,driver):
 
 def load_in_db():
     url_text_chunks = []
-    # links = extract_links('List of my best posts -2021.pdf') + extract_links('List of my best posts 2022.pdf') + extract_links('List of my best posts 2023.pdf')
+    links = extract_links('List of my best posts -2021.pdf') + extract_links('List of my best posts 2022.pdf') + extract_links('List of my best posts 2023.pdf')
     # Set up the WebDriver (make sure chromedriver is in your PATH or provide the path to the executable)
     driver = webdriver.Chrome()
 
@@ -240,14 +273,14 @@ def load_in_db():
     linkedin_login(linkedin_email, linkedin_password , driver)
     # linkedin_post_url = "https://www.linkedin.com/posts/ridhima-kumar7_marketingmixmodeling-marketingattribution-activity-7125811575931760640-Sx65?utm_source=share&utm_medium=member_desktop"
 
-    file_path = 'MMMGPT_linkedin_blogs.xlsx'
-    df = pd.read_excel(file_path, header=None)
-    links = df.iloc[:, 0].tolist()
-
+    # file_path = 'MMMGPT_linkedin_blogs.xlsx'
+    # df = pd.read_excel(file_path, header=None)
+    # links = df.iloc[:, 0].tolist()
+    # print(links)
     for linkedin_post_url in links:
-        post_text,_ = scrape_linkedin_post(linkedin_post_url , driver)
+        post_text,image_address = scrape_linkedin_post(linkedin_post_url , driver)
         text_chunks = get_text_chunks(post_text)
-        image_address = extract_next_image_url(linkedin_post_url , driver)
+        # image_address = extract_next_image_url(linkedin_post_url , driver)
         for chunk in text_chunks:
             url_text_chunks.append(f"Linkedin Link : {linkedin_post_url}\n{chunk}\n{image_address}")
     
