@@ -154,6 +154,12 @@ def user_input1(user_question):
     Answer:
     """
 
+    # New code
+    language, confidence = langid.classify(user_question)
+    # print(language)
+    user_question = translate(user_question , language , "en")
+    # New code
+    
     model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
@@ -190,7 +196,7 @@ def user_input(user_question):
     """
     # New code
     language, confidence = langid.classify(user_question)
-    print(language)
+    # print(language)
     user_question = translate(user_question , language , "en")
     # New code
     
