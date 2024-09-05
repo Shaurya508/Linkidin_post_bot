@@ -31,6 +31,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 import re
+import langid
+from trial import translate
 # Load the Google API key from the .env file
 # load_dotenv()
 # API_KEY = "AIzaSyCvw_aGHyJtLxpZ4Ojy8EyaEDtPOzZM29"
@@ -176,7 +178,7 @@ def user_input1(user_question):
     # print(post_link1)
     # print(post_link2)
     response = chain({"input_documents": docs, "question": user_question}, return_only_outputs=True)
-    return response, post_link1 , post_link2
+    return response, None , post_link1
 
 
 def user_input(user_question):
@@ -186,7 +188,12 @@ def user_input(user_question):
     Question:\n{question}. + Explain in detail.\n
     Answer:
     """
-
+    # New code
+    language, confidence = langid.classify(user_question)
+    print(language)
+    user_question = translate(user_question , language , "en")
+    # New code
+    
     model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
