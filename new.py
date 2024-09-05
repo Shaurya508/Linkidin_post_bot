@@ -155,9 +155,9 @@ def user_input1(user_question):
     """
 
     # New code
-    language, confidence = langid.classify(user_question)
+    # language, confidence = langid.classify(user_question)
     # print(language)
-    user_question = translate(user_question , language , "en")
+    # user_question = translate(user_question , language , "en")
     # New code
     
     model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0)
@@ -195,9 +195,9 @@ def user_input(user_question):
     Answer:
     """
     # New code
-    language, confidence = langid.classify(user_question)
+    # language, confidence = langid.classify(user_question)
     # print(language)
-    user_question = translate(user_question , language , "en")
+    # user_question = translate(user_question , language , "en")
     # New code
     
     model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0)
