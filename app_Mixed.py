@@ -17,7 +17,7 @@ if 'query_count' not in st.session_state:
 
 if 'conversation_history' not in st.session_state:
     st.session_state.conversation_history = []
-
+ 
 if 'suggested_question' not in st.session_state:
     st.session_state.suggested_question = ""
 
