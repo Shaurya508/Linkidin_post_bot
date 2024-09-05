@@ -17,7 +17,7 @@ from langchain.retrievers.multi_query import MultiQueryRetriever
 from pdf2image import convert_from_path
 # from PIL import Image
 import streamlit as st
-import pytesseract
+import pytesseract 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
