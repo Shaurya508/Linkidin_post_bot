@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from new import user_input , user_input1
+from main_functions import user_input , user_input1, user_input2
 from io import BytesIO
 from PIL import Image , UnidentifiedImageError
 import requests
@@ -17,7 +17,7 @@ if 'query_count' not in st.session_state:
 
 if 'conversation_history' not in st.session_state:
     st.session_state.conversation_history = []
- 
+
 if 'suggested_question' not in st.session_state:
     st.session_state.suggested_question = ""
 
@@ -50,7 +50,7 @@ def authenticate_user(email):
         return True
     return False
 
-def get_image_link(article_link, file_path='Linkidin_blogs.xlsx'):
+def get_image_link(article_link, file_path='Linkidin_blogs.xlsx'): # LinkedIn blog ke parallely, ek image link bhi store hui hai
     # Load the Excel file
     df = pd.read_excel(file_path)
 
@@ -106,9 +106,9 @@ def create_ui():
     """
 
     st.markdown(hide_streamlit_style, unsafe_allow_html=True)
-    st.markdown("<h2 style='text-align: center; color: #0adbfc;'><u> Venkat's LinkedIn GPT</u></h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='text-align: center; color: #0adbfc;'><u> Venkat's LinkStackWiki GPT</u></h2>", unsafe_allow_html=True)
     st.sidebar.image("Aryma Labs Logo.jpeg")
-    st.sidebar.markdown("<h3 style='color: #08daff;'>Welcome to Venkat's LinkedIn GPT</h2>", unsafe_allow_html=True)
+    st.sidebar.markdown("<h3 style='color: #08daff;'>Welcome to Venkat's LinkStackWiki GPT</h2>", unsafe_allow_html=True)
     # st.sidebar.write("Ask anything about MMM and get accurate answers.")
     
 
@@ -183,7 +183,7 @@ def create_ui():
                 st.image('download.png', width=30)
             with col2:
                 
-                st.write("Hello, I am Venkat's LinkedIn GPT . How can I help you?")
+                st.write("Hello, I am Venkat's LinkStackWiki GPT . How can I help you?")
     for idx , (q, r , url , post_link) in enumerate(st.session_state.conversation_history):
         st.markdown(f"<p style='text-align: right; color: #484f4f;'><b>{q}</b></p>", unsafe_allow_html=True)
         col1, col2 = st.columns([1, 8])
@@ -202,8 +202,9 @@ def create_ui():
             # Display the translation
             # st.subheader('Translated Text')
             st.write( translated_text + "\n\n" + translate("For more details, please visit", from_lang='en', to_lang=LANGUAGES[target_language]) + ": " + post_link)
+
         image_link = get_image_link(post_link)
-        if image_link is not None:
+        if image_link is not None and url is not None:
             try:
                 response = requests.get(image_link)
                 img = Image.open(BytesIO(response.content))
@@ -225,35 +226,40 @@ def create_ui():
         )
         
         # Buttons placed below the text box
-        # col1, col2 = st.columns(2)
-        col1, col2 = st.columns([1,2], gap="small")
+        col1, col2, col3 = st.columns([1, 1, 1], gap="small")
         with col1:
             linkedin_button = st.form_submit_button(label='Chat with LinkedIn posts')
         with col2:
             stackexchange_button = st.form_submit_button(label='Chat with StackExchange')
-    
+        with col3:
+            wiki_button = st.form_submit_button(label='Chat with Wiki')
+
         if linkedin_button and question:
             st.session_state.generate_response = 'linkedin'
         elif stackexchange_button and question:
             st.session_state.generate_response = 'stackexchange'
-    
-    if st.session_state.generate_response and question:
-        if st.session_state.query_count >= QUERY_LIMIT:
-            st.warning("You have reached the limit of free queries. Please consider our pricing options for further use.")
-        else:
-            with st.spinner("Generating response..."):
-                if st.session_state.generate_response == 'linkedin':
-                    response, image_address, post_link = user_input(question)
-                elif st.session_state.generate_response == 'stackexchange':
-                    response, image_address, post_link = user_input1(question)
+        elif wiki_button and question:
+            st.session_state.generate_response = 'wiki'
+
+        if st.session_state.generate_response and question:
+            if st.session_state.query_count >= QUERY_LIMIT:
+                st.warning("You have reached the limit of free queries. Please consider our pricing options for further use.")
+            else:
+                with st.spinner("Generating response..."):
+                    if st.session_state.generate_response == 'linkedin':
+                        response, image_address, post_link = user_input(question)
+                    elif st.session_state.generate_response == 'stackexchange':
+                        response, image_address, post_link = user_input1(question)
+                    elif st.session_state.generate_response == 'wiki':
+                        response, image_address, post_link = user_input2(question)
                     
-                output_text = response.get('output_text', 'No response')  # Extract the 'output_text' from the response
-                st.session_state.chat += str(output_text)
-                st.session_state.conversation_history.append((question, output_text, image_address, post_link))
-                st.session_state.suggested_question = ""  # Reset the suggested question after submission
-                st.session_state.query_count += 1  # Increment the query count
-                st.session_state.generate_response = False
-                st.rerun()
+                    output_text = response.get('output_text', 'No response')  # Extract the 'output_text' from the response
+                    st.session_state.chat += str(output_text)
+                    st.session_state.conversation_history.append((question, output_text, image_address, post_link))
+                    st.session_state.suggested_question = ""  # Reset the suggested question after submission
+                    st.session_state.query_count += 1  # Increment the query count
+                    st.session_state.generate_response = False
+                    st.rerun()
 
 
 
