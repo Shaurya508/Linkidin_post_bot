@@ -33,7 +33,7 @@ from selenium.common.exceptions import NoSuchElementException, StaleElementRefer
 import re
 import json
 
-GOOGLE_API_KEY = "AIzaSyC2sy1EuJs3OeM8yQXDrhf7xHuNd1_5L-Y"
+GOOGLE_API_KEY = "AIzaSyDO6Dgc7W_6IJ6SL3ciAWZi7H7b2DXIQxA"
 
 def extract_links(pdf_path):
     links = []
@@ -152,7 +152,7 @@ def user_input(user_question):
     Answer:
     """
 
-    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0, google_api_key = GOOGLE_API_KEY)
+    model = ChatGoogleGenerativeAI(model="gemini-1.0-pro", temperature=0, google_api_key = GOOGLE_API_KEY)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key = GOOGLE_API_KEY)
@@ -180,7 +180,7 @@ def user_input(user_question):
     #print([doc for doc in docs])
     page_content = docs[0].page_content
     urls = re.findall(r'https?://\S+', page_content)
-
+    print(urls)
     image_address = urls[-1] if urls else None
     post_link = urls[0] if urls else None
 
@@ -204,7 +204,7 @@ def user_input1(user_question):
     Answer:
     """
 
-    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0, google_api_key = GOOGLE_API_KEY)
+    model = ChatGoogleGenerativeAI(model="gemini-1.0-pro", temperature=0, google_api_key = GOOGLE_API_KEY)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key = GOOGLE_API_KEY)
@@ -254,7 +254,7 @@ def user_input2(user_question):
     Answer:
     """
 
-    model = ChatGoogleGenerativeAI(model="gemini-pro", temperature=0, google_api_key = GOOGLE_API_KEY)
+    model = ChatGoogleGenerativeAI(model="gemini-1.0-pro", temperature=0, google_api_key = GOOGLE_API_KEY)
     prompt = PromptTemplate(template=prompt_template, input_variables=["context", "question"])
     chain = load_qa_chain(model, chain_type="stuff", prompt=prompt)
     embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001", google_api_key = GOOGLE_API_KEY)
