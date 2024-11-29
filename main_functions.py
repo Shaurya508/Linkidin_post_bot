@@ -232,7 +232,7 @@ def user_input1(user_question):
     page_content = docs[0].page_content
     urls = re.findall(r'https?://\S+', page_content)
 
-    image_address = urls[-1] if urls else None
+    image_address = None
     post_link = urls[0] if urls else None
 
     response = chain({
@@ -282,7 +282,7 @@ def user_input2(user_question):
     page_content = docs[0].page_content
     urls = re.findall(r'https?://\S+', page_content)
 
-    image_address = urls[-1] if urls else None
+    image_address = None
     post_link = urls[0] if urls else None
 
     response = chain({
